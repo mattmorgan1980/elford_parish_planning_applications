@@ -22,3 +22,29 @@
 # All that matters is that your final data is written to an SQLite database
 # called "data.sqlite" in the current working directory which has at least a table
 # called "data".
+
+import requests
+from bs4 import BeautifulSoup
+
+url = "https://planning.lichfielddc.gov.uk/online-applications/"
+params = {"parish": "ELF"}
+
+page = requests.get(url, params=params)
+
+soup = BeautifulSoup(page.content, "html.parser")
+
+# Find all the table rows containing planning applications
+rows = soup.find_all("tr", {"class": "searchresult"})
+
+for row in rows:
+    # Extract the relevant data from each row
+    application_number = row.find("td", {"class": "searchresultnumber"}).get_text().strip()
+    application_date = row.find("td", {"class": "searchresultdate"}).get_text().strip()
+    application_address = row.find("td", {"class": "searchresultaddress"}).get_text().strip()
+
+    # Print out the data
+    print(f"Application Number: {application_number}")
+    print(f"Application Date: {application_date}")
+    print(f"Application Address: {application_address}")
+    print("\n")
+
